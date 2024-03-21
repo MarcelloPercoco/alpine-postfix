@@ -1,9 +1,9 @@
 name: Push-to-build  # When pushing to any branch then run this action
 # Env variable
 env:
-  DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKER_USER: ${{ vars.DOCKERHUB_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-  REPO_NAME: ${{ secrets.REPO_NAME }}
+  REPO_NAME: ${{ vars.REPO_NAME }}
 
 on:
   push:
