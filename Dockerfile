@@ -1,7 +1,7 @@
 FROM alpine:latest
 LABEL MAINTAINER="Marcello Percoco <marcello.percoco@gmail.com>"
 
-RUN apk add --no-cache bash postfix postfix-pcre 
+RUN apk add --no-cache bash postfix postfix-pcre cyrus-sasl
 
 COPY conf /etc/postfix
 
