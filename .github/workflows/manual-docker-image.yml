@@ -21,7 +21,7 @@ jobs: # job name
           username: ${{ env.DOCKER_USER }}
           password: ${{ env.DOCKER_PASSWORD }}
       - name: Build the Docker image # push The image to the docker hub
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v6
         with:
           context: .
           tags: ${{ env.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ env.REPO_NAME }}:latest
