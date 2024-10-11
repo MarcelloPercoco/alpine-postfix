@@ -1,4 +1,6 @@
-FROM alpine:latest
+ARG ALPINE_VERSION=3.20
+
+FROM alpine:${ALPINE_VERSION}
 LABEL MAINTAINER="Marcello Percoco <marcello.percoco@gmail.com>"
 
 RUN apk add --no-cache bash postfix postfix-pcre cyrus-sasl
