@@ -17,7 +17,7 @@ jobs: # job name
       - uses: actions/checkout@v4 # first action : checkout source code
       - name: take postfix version
         run: |
-          echo "POSTFIX_VERSION=$(curl -s https://pkgs.alpinelinux.org/package/edge/main/x86/postfix | grep  "Flag this package out of date" | sed -E 's/[^>]*>(.*)<\/a>.*/\1/g')" >> $GITHUB_ENV
+          echo "POSTFIX_VERSION=$(docker run -it --rm docker.io/alpine:3.20 /bin/sh -c \"apk update -q && apk add keepalived -q && apk info keepalived | head -n 1 | cut -d ' ' -f 1 | cut -d '-' -f 2-\")" >> $GITHUB_ENV
       - name: docker login
         uses: docker/login-action@v3
         with:
