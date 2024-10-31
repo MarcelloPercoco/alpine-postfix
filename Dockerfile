@@ -3,6 +3,8 @@ ARG ALPINE_VERSION=3.20
 FROM alpine:${ALPINE_VERSION}
 LABEL MAINTAINER="Marcello Percoco <marcello.percoco@gmail.com>"
 
+HEALTHCHECK CMD nc -z 127.0.0.1 25
+
 RUN apk update \
 	&& apk upgrade --no-cache
 
