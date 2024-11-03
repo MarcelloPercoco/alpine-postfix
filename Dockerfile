@@ -1,14 +1,14 @@
 ARG ALPINE_VERSION=3.20
 
 FROM alpine:${ALPINE_VERSION}
-LABEL MAINTAINER="Marcello Percoco <marcello.percoco@gmail.com>"
+
+LABEL MAINTAINER="Marcello Percoco <114474556+MarcelloPercoco@users.noreply.github.com>"
 
 HEALTHCHECK CMD nc -z 127.0.0.1 25
 
 RUN apk update \
-	&& apk upgrade --no-cache
-
-RUN apk add --no-cache bash postfix postfix-pcre cyrus-sasl
+	&& apk upgrade --no-cache \
+	&& apk add --no-cache bash postfix postfix-pcre cyrus-sasl
 
 COPY conf /etc/postfix
 
