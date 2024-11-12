@@ -37,7 +37,7 @@ jobs: # job name
       - name: docker login
         uses: docker/login-action@v3
         with:
-          username: ${{ env.GITHUB_TRIGGERING_ACTOR }}
+          username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build the Docker image # push The image to the docker hub
         uses: docker/build-push-action@v6
