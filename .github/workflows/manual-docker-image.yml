@@ -2,7 +2,6 @@ name: Manual-build  # manualy build image
 # Env variable
 env:
   ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
-  DESCRIPTION: "Simple Postfix Container based on Alpine Linux"
 
 on: workflow_dispatch
 
@@ -55,3 +54,4 @@ jobs: # job name
             name=target
             annotation-index.org.opencontainers.image.description=${{ env.DESCRIPTION }}
             provenance=mode=max
+            sbom=true
