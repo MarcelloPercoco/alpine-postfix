@@ -13,7 +13,7 @@ jobs: # job name
       - uses: actions/checkout@v4 # first action : checkout source code
       - name: take postfix version
         run: |
-          echo "POSTFIX_VERSION=$(docker run --rm docker.io/alpine:${ALPINE_VERSION} /bin/sh -c 'apk update -q && apk add postfix -q && apk info postfix | head -n 1' | sed -e 's/[^-]*-\(.*\) [^ ]*/\1/' )" >> $GITHUB_ENV
+          echo "POSTFIX_VERSION=$(docker run --rm docker.io/alpine:${{ vars.ALPINE_VERSION }} /bin/sh -c 'apk update -q && apk add postfix -q && apk info postfix | head -n 1' | sed -e 's/[^-]*-\(.*\) [^ ]*/\1/' )" >> $GITHUB_ENV
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
