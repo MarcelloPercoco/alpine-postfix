@@ -39,7 +39,7 @@ jobs: # job name
         uses: docker/build-push-action@v6
         with:
           context: .
-          tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/${GITHUB_REPOSITORY}:${{ env.POSTFIX_VERSION }},ghcr.io/${GITHUB_REPOSITORY}:latest
+          tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/${{ github.repository }}:${{ env.POSTFIX_VERSION }},ghcr.io/${{ github.repository }}:latest
           build-args: ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
