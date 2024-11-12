@@ -1,5 +1,7 @@
 name: Manual-build  # manualy build image
 # Env variable
+env:
+  ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
 
 on: workflow_dispatch
 
@@ -10,7 +12,7 @@ jobs: # job name
       - uses: actions/checkout@v4 # first action : checkout source code
       - name: take postfix version
         run: |
-          echo "POSTFIX_VERSION=$(docker run --rm docker.io/alpine:${{ vars.ALPINE_VERSION }} /bin/sh -c 'apk update -q && apk add postfix -q && apk info postfix | head -n 1' | sed -e 's/[^-]*-\(.*\) [^ ]*/\1/' )" >> $GITHUB_ENV
+          echo "POSTFIX_VERSION=$(docker run --rm docker.io/alpine:${ALPINE_VERSION} /bin/sh -c 'apk update -q && apk add postfix -q && apk info postfix | head -n 1' | sed -e 's/[^-]*-\(.*\) [^ ]*/\1/' )" >> $GITHUB_ENV
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
@@ -34,7 +36,7 @@ jobs: # job name
         uses: docker/build-push-action@v6
         with:
           context: .
-          tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/$GITHUB_REPOSITORY:${{ env.POSTFIX_VERSION }},ghcr.io/$GITHUB_REPOSITORY:latest
+          tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/${GITHUB_REPOSITORY}:${{ env.POSTFIX_VERSION }},ghcr.io/${GITHUB_REPOSITORY}:latest
           build-args: ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
