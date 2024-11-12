@@ -1,7 +1,7 @@
 name: Manual-build  # manualy build image
 # Env variable
 env:
-  ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
+  ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
 
 on: workflow_dispatch
 

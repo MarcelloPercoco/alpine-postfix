@@ -1,7 +1,7 @@
 name: Push-to-build  # When pushing to any branch then run this action
 # Env variable
 env:
-  ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
+  ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
 
 on:
   push:
