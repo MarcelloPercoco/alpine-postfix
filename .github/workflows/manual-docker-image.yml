@@ -10,7 +10,7 @@ jobs: # job name
     runs-on: ubuntu-latest  # runner name : (ubuntu latest version)
     steps:
       - uses: actions/checkout@v4 # first action : checkout source code
-      - naem: lowercase repository
+      - name: lowercase repository
         run: |
           echo "IMAGE_NAME=${GITHUB_REPOSITORY@L}" >> ${GITHUB_ENV}
       - name: take postfix version
