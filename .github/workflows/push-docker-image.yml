@@ -2,6 +2,7 @@ name: Push-to-build  # When pushing to any branch then run this action
 # Env variable
 env:
   ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
+  DESCRIPTION: "Simple Postfix Container based on Alpine Linux"
 
 on:
   push:
@@ -42,7 +43,9 @@ jobs: # job name
         uses: docker/build-push-action@v6
         with:
           context: .
-          tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }},ghcr.io/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest
+          #tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }},ghcr.io/${{ env.IMAGE_NAME }}:latest
           build-args: ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
+          outputs: type=image,name=target,annotation-index.org.opencontainers.image.description=${{ env.DESCRIPTION }}
