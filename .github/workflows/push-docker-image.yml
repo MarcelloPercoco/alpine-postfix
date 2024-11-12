@@ -5,8 +5,6 @@ env:
   DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
   REPO_NAME: ${{ vars.REPO_NAME }}
   ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
-  GITHUB_USER: ${{ env.GITHUB_TRIGGERING_ACTOR }}
-  GITHUB_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
 
 on:
   push:
