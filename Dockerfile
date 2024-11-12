@@ -2,9 +2,11 @@ ARG ALPINE_VERSION=3.20
 
 FROM alpine:${ALPINE_VERSION}
 
+ARG DESCRIPTION=""
+
 LABEL MAINTAINER="Marcello Percoco <114474556+MarcelloPercoco@users.noreply.github.com>"
 LABEL org.opencontainers.image.source=https://github.com/MarcelloPercoco/alpine-postfix
-LABEL org.opencontainers.image.description="Simple Postfix container"
+LABEL org.opencontainers.image.description="${DESCRIPTION}"
 
 HEALTHCHECK CMD nc -z 127.0.0.1 25
 

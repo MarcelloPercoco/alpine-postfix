@@ -1,13 +1,16 @@
 name: Build-Action  # When pushing to any branch then run this action
 # Env variable
 env:
-  ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
+  ALPINE_VERSION: "3.20"
+  DESCRIPTION: "Simple postfix image based on alpine linux"
 
 on:
   workflow_dispatch:
   push:
     branches:
     - 'main'
+  schedule:
+    - cron: "0 0 * * 0"
 
 jobs: # job name
   build-deploy:
@@ -47,7 +50,9 @@ jobs: # job name
             ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }}
             ${{ vars.REPO_NAME }}:latest
           #tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }},ghcr.io/${{ env.IMAGE_NAME }}:latest
-          build-args: ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
+          build-args: |
+            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
+            DESCRIPTION=${{ env.DESCRIPTION }}
           platforms: |
             linux/arm/v7
             linux/arm64
@@ -58,4 +63,4 @@ jobs: # job name
           outputs: |
             type=image
             name=target
-            annotation-index.org.opencontainers.image.description=${{ vars.DESCRIPTION }}
+            annotation-index.org.opencontainers.image.description="${{ env.DESCRIPTION }}"
