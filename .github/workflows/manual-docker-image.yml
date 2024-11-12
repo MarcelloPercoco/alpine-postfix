@@ -1,16 +1,11 @@
 name: Manual-build  # manualy build image
 # Env variable
-env:
-  DOCKER_USER: ${{ vars.DOCKERHUB_USERNAME }}
-  DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
-  REPO_NAME: ${{ vars.REPO_NAME }}
-  ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
 
 on: workflow_dispatch
 
-jobs: # job name 
-  build-deploy: 
-    runs-on: ubuntu-latest  # runner name : (ubuntu latest version)     
+jobs: # job name
+  build-deploy:
+    runs-on: ubuntu-latest  # runner name : (ubuntu latest version)
     steps:
       - uses: actions/checkout@v4 # first action : checkout source code
       - name: take postfix version
@@ -27,8 +22,8 @@ jobs: # job name
       - name: docker login
         uses: docker/login-action@v3
         with:
-          username: ${{ env.DOCKER_USER }}
-          password: ${{ env.DOCKER_PASSWORD }}
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: docker login
         uses: docker/login-action@v3
         with:
@@ -39,7 +34,7 @@ jobs: # job name
         uses: docker/build-push-action@v6
         with:
           context: .
-          tags: ${{ env.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ env.REPO_NAME }}:latest,ghcr.io/${{ github_repository }}:${{ env.POSTFIX_VERSION }},ghcr.io/${{ github_repository }}:latest
-          build-args: ALPINE_VERSION=${{ env.ALPINE_VERSION }}
+          tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/$GITHUB_REPOSITORY:${{ env.POSTFIX_VERSION }},ghcr.io/$GITHUB_REPOSITORY:latest
+          build-args: ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
           platforms: linux/arm/v7,linux/arm64,linux/amd64
           push: true
