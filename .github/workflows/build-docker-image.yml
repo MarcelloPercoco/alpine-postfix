@@ -53,9 +53,9 @@ jobs: # job name
             linux/arm64
             linux/amd64
           push: true
+          sbom: true
+          provenance: mode=max
           outputs: |
             type=image
             name=target
             annotation-index.org.opencontainers.image.description=${{ vars.DESCRIPTION }}
-            provenance=mode=max
-            sbom=true
