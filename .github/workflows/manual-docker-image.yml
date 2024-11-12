@@ -52,6 +52,6 @@ jobs: # job name
           outputs: |
             type=image
             name=target
-            annotation-index.org.opencontainers.image.description=${{ env.DESCRIPTION }}
+            annotation-index.org.opencontainers.image.description=${{ vars.DESCRIPTION }}
             provenance=mode=max
             sbom=true

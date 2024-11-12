@@ -2,7 +2,6 @@ name: Build-Action  # When pushing to any branch then run this action
 # Env variable
 env:
   ALPINE_VERSION: ${{ vars.ALPINE_VERSION }}
-  DESCRIPTION: "Simple Postfix Container based on Alpine Linux"
 
 on:
   workflow_dispatch:
@@ -57,6 +56,6 @@ jobs: # job name
           outputs: |
             type=image
             name=target
-            annotation-index.org.opencontainers.image.description=${{ env.DESCRIPTION }}
+            annotation-index.org.opencontainers.image.description=${{ vars.DESCRIPTION }}
             provenance=mode=max
             sbom=true
