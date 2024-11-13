@@ -21,7 +21,8 @@ jobs: # job name
       id-token: write
     runs-on: ubuntu-latest  # runner name : (ubuntu latest version)
     steps:
-      - uses: actions/checkout@v4 # first action : checkout source code
+      - name: Check out my repo
+        uses: actions/checkout@v4
       - name: lowercase repository
         run: |
           echo "IMAGE_NAME=${GITHUB_REPOSITORY@L}" >> ${GITHUB_ENV}
@@ -50,18 +51,17 @@ jobs: # job name
       - name: Build the Docker image # push The image to the docker hub
         uses: docker/build-push-action@v6
         with:
-          context: .
           tags: |
             ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }}
             ${{ vars.REPO_NAME }}:latest
             ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }}
             ghcr.io/${{ env.IMAGE_NAME }}:latest
-          build-args: |
-            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
           labels:
             MAINTAINER="Marcello Percoco <114474556+MarcelloPercoco@users.noreply.github.com>"
             org.opencontainers.image.source=https://github.com/MarcelloPercoco/alpine-postfix
             org.opencontainers.image.description=${{env. DESCRIPTION }}
+          build-args: |
+            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
           platforms: |
             linux/arm/v7
             linux/arm64
