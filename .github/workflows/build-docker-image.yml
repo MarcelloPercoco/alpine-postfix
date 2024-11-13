@@ -54,7 +54,7 @@ jobs: # job name
           tags: |
             ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }}
             ${{ vars.REPO_NAME }}:latest
-            latest,ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }}
             ghcr.io/${{ env.IMAGE_NAME }}:latest
           build-args: |
             ALPINE_VERSION=${{ env.ALPINE_VERSION }}
