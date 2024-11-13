@@ -49,10 +49,14 @@ jobs: # job name
           tags: |
             ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }}
             ${{ vars.REPO_NAME }}:latest
-          #tags: ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }},${{ vars.REPO_NAME }}:latest,ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }},ghcr.io/${{ env.IMAGE_NAME }}:latest
+            latest,ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }}
+            ghcr.io/${{ env.IMAGE_NAME }}:latest
           build-args: |
             ALPINE_VERSION=${{ env.ALPINE_VERSION }}
-            DESCRIPTION=${{ env.DESCRIPTION }}
+          labels:
+            MAINTAINER="Marcello Percoco <114474556+MarcelloPercoco@users.noreply.github.com>"
+            org.opencontainers.image.source=https://github.com/MarcelloPercoco/alpine-postfix
+            org.opencontainers.image.description=${{env. DESCRIPTION }}
           platforms: |
             linux/arm/v7
             linux/arm64
@@ -60,7 +64,4 @@ jobs: # job name
           push: true
           sbom: true
           provenance: mode=max
-          outputs: |
-            type=image
-            name=target
-            annotation-index.org.opencontainers.image.description="${{ env.DESCRIPTION }}"
+          annotations: org.opencontainers.image.description=${{ env.DESCRIPTION }}
