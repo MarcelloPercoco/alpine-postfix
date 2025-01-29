@@ -1,7 +1,7 @@
 name: Build-Action  # When pushing to any branch then run this action
 # Env variable
 env:
-  ALPINE_VERSION: "3.20"
+  ALPINE_VERSION: "${{ vars.ALPINE_VERSION }}"
   DESCRIPTION: "Simple postfix image based on alpine linux"
 
 on:
