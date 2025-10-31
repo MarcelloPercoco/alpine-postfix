@@ -27,7 +27,7 @@ jobs: # job name
           echo "IMAGE_NAME=${GITHUB_REPOSITORY@L}" >> ${GITHUB_ENV}
       - name: take postfix version
         run: |
-          echo "POSTFIX_VERSION=$(docker run --rm docker.io/alpine:${ALPINE_VERSION} /bin/sh -c 'apk update -q && apk add postfix -q && apk info postfix | head -n 1' | sed -e 's/[^-]*-\(.*\) [^ ]*/\1/' )" >> $GITHUB_ENV
+          echo "POSTFIX_VERSION=$(docker run --rm docker.io/alpine:${{ vars.ALPINE_VERSION }} /bin/sh -c 'apk update -q && apk add postfix -q && apk info postfix | head -n 1' | sed -e 's/[^-]*-\(.*\) [^ ]*/\1/' )" >> $GITHUB_ENV
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
@@ -51,9 +51,9 @@ jobs: # job name
         uses: docker/build-push-action@v6
         with:
           tags: |
-            ${{ vars.REPO_NAME }}:${{ vars.POSTFIX_VERSION }}
+            ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }}
             ${{ vars.REPO_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ vars.POSTFIX_VERSION }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }}
             ghcr.io/${{ env.IMAGE_NAME }}:latest
           labels:
             MAINTAINER="Marcello Percoco <114474556+MarcelloPercoco@users.noreply.github.com>"
