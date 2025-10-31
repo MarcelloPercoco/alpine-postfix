@@ -51,9 +51,9 @@ jobs: # job name
         uses: docker/build-push-action@v6
         with:
           tags: |
-            ${{ vars.REPO_NAME }}:${{ env.POSTFIX_VERSION }}
+            ${{ vars.REPO_NAME }}:${{ vars.POSTFIX_VERSION }}
             ${{ vars.REPO_NAME }}:latest
-            ghcr.io/${{ env.IMAGE_NAME }}:${{ env.POSTFIX_VERSION }}
+            ghcr.io/${{ env.IMAGE_NAME }}:${{ vars.POSTFIX_VERSION }}
             ghcr.io/${{ env.IMAGE_NAME }}:latest
           labels:
             MAINTAINER="Marcello Percoco <114474556+MarcelloPercoco@users.noreply.github.com>"
