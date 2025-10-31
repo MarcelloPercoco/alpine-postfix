@@ -1,7 +1,6 @@
 name: Build-Action  # When pushing to any branch then run this action
 # Env variable
 env:
-  ALPINE_VERSION: "${{ vars.ALPINE_VERSION }}"
   DESCRIPTION: "Simple postfix image based on alpine linux"
 
 on:
@@ -61,7 +60,7 @@ jobs: # job name
             org.opencontainers.image.source=https://github.com/MarcelloPercoco/alpine-postfix
             org.opencontainers.image.description=${{env. DESCRIPTION }}
           build-args: |
-            ALPINE_VERSION=${{ env.ALPINE_VERSION }}
+            ALPINE_VERSION=${{ vars.ALPINE_VERSION }}
           platforms: |
             linux/arm/v7
             linux/arm64
