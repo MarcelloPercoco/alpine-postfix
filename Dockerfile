@@ -4,9 +4,8 @@ FROM alpine:${ALPINE_VERSION}
 
 HEALTHCHECK CMD nc -z 127.0.0.1 25
 
-RUN apk update \
-	&& apk upgrade --no-cache \
-	&& apk add --no-cache bash postfix postfix-pcre cyrus-sasl
+RUN apk upgrade --no-cache && \
+	apk add --no-cache bash postfix postfix-pcre cyrus-sasl
 
 COPY conf /etc/postfix
 
