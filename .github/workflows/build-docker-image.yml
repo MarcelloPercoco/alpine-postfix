@@ -69,7 +69,7 @@ jobs: # job name
           sbom: true
           provenance: mode=max
           annotations: org.opencontainers.image.description=${{ env.DESCRIPTION }}
-
+          
   cleanup:
     needs: build-deploy
     runs-on: ubuntu-latest
@@ -78,25 +78,31 @@ jobs: # job name
       contents: read
   
     steps:
-      - name: Get last 3 tags from GHCR
+  
+      - name: Extract last 3 real GHCR tags
         id: tags
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          IMAGE="${GITHUB_REPOSITORY@L}"
-          TAGS=$(gh api \
-            /users/${GITHUB_REPOSITORY_OWNER}/packages/container/${GITHUB_REPOSITORY#*/}/versions \
-            --jq '.[].metadata.container.tags[]' | sort -u)
-          
-          # prendi gli ultimi 3 tag in ordine temporale
-          LAST3=$(gh api \
-            /users/${GITHUB_REPOSITORY_OWNER}/packages/container/${GITHUB_REPOSITORY#*/}/versions \
-            --jq '[.[].metadata.container.tags[0]] | unique | .[:3] | join(",")')
+          OWNER="${GITHUB_REPOSITORY_OWNER}"
+          IMAGE="${GITHUB_REPOSITORY#*/}"
+  
+          # Ottieni tutte le versioni dal registry GHCR
+          RESP=$(curl -s -H "Authorization: Bearer $TOKEN" \
+            "https://api.github.com/users/${OWNER}/packages/container/${IMAGE}/versions?per_page=100")
+  
+          # Estrai SOLO i tag reali (ignorando doppioni e voci null)
+          TAGS=$(echo "$RESP" | jq -r '.[].metadata.container.tags[]?' | sort -u)
+  
+          # Prendi gli ultimi 3 (in ordine di apparizione)
+          LAST3=$(echo "$TAGS" | tail -n 3 | paste -sd "," -)
   
           echo "KEEP_TAGS=$LAST3" >> $GITHUB_ENV
   
-      - name: Cleanup GHCR (only untagged + keep last 3 real tags)
+  
+      - name: Cleanup GHCR (untagged + keep last 3 tags)
         uses: dataaxiom/ghcr-cleanup-action@v1
         with:
           dry-run: false
           delete-untagged: true
           keep-tags: ${{ env.KEEP_TAGS }}
-  
