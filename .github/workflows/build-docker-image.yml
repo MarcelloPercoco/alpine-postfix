@@ -71,6 +71,7 @@ jobs: # job name
           annotations: org.opencontainers.image.description=${{ env.DESCRIPTION }}
 
   cleanup:
+    needs: build-deploy       # ← esegue SOLO dopo la build
     runs-on: ubuntu-latest
     permissions:
       packages: write
