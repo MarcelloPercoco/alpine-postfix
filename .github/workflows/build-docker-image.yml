@@ -75,14 +75,28 @@ jobs: # job name
     runs-on: ubuntu-latest
     permissions:
       packages: write
+      contents: read
   
     steps:
-      - name: Cleanup GHCR (untagged + keep last 3 real tags)
-        uses: quartx-analytics/ghcr-cleaner@v1
+      - name: Get last 3 tags from GHCR
+        id: tags
+        run: |
+          IMAGE="${GITHUB_REPOSITORY@L}"
+          TAGS=$(gh api \
+            /users/${GITHUB_REPOSITORY_OWNER}/packages/container/${GITHUB_REPOSITORY#*/}/versions \
+            --jq '.[].metadata.container.tags[]' | sort -u)
+          
+          # prendi gli ultimi 3 tag in ordine temporale
+          LAST3=$(gh api \
+            /users/${GITHUB_REPOSITORY_OWNER}/packages/container/${GITHUB_REPOSITORY#*/}/versions \
+            --jq '[.[].metadata.container.tags[0]] | unique | .[:3] | join(",")')
+  
+          echo "KEEP_TAGS=$LAST3" >> $GITHUB_ENV
+  
+      - name: Cleanup GHCR (only untagged + keep last 3 real tags)
+        uses: dataaxiom/ghcr-cleanup-action@v1
         with:
-          owner-type: user
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository-owner: ${{ github.repository_owner }}
-          package-name: ${{ github.event.repository.name }}
+          dry-run: false
           delete-untagged: true
-          keep-at-most: 3
+          keep-tags: ${{ env.KEEP_TAGS }}
+  
