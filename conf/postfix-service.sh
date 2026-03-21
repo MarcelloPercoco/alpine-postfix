@@ -1,33 +1,36 @@
-#!/bin/bash
+#!/bin/sh
 
-function log {
-  echo `date` $ME - $@
+log() {
+  echo "$(date) $ME - $@"
 }
 
-function serviceConf {
-  # Check hostname variable
-  if [[ ! ${HOSTNAME} =~ \. ]]; then
-    HOSTNAME=$HOSTNAME.$DOMAIN
-  fi
+serviceConf() {
+  # Controlla la variabile hostname con un costrutto case (esente da regex bash)
+  case "${HOSTNAME}" in
+    *.*) ;;
+    *) HOSTNAME="${HOSTNAME}.${DOMAIN}" ;;
+  esac
 
-  # Substitute configuration
-  for VARIABLE in `env | cut -f1 -d=`; do
-    VAR=${VARIABLE//:/_}
-    sed -i "s={{ $VAR }}=${!VAR}=g" /etc/postfix/*.cf
+  # Sostituzione delle variabili con costrutti POSIX standard
+  for VARIABLE in $(env | cut -f1 -d=); do
+    VAR=$(echo "$VARIABLE" | tr ':' '_')
+    # Usa eval per simulare in modo sicuro l'espansione indiretta delle variazioni (${!VAR})
+    eval VAL="\$${VARIABLE}"
+    sed -i "s={{ $VAR }}=${VAL}=g" /etc/postfix/*.cf
   done
 
-  # Override Postfix configuration
+  # Override Postfix configuration usando grep per scartare commenti e righe vuote
   if [ -f /overrides/postfix.cf ]; then
-    while read line; do
-      [[ -n "$line" && "$line" != [[:blank:]#]* ]] && postconf -e "$line"
-    done < /overrides/postfix.cf
+    grep -vE '^[[:space:]]*(#|$)' /overrides/postfix.cf | while IFS= read -r line; do
+      postconf -e "$line"
+    done
     echo "Loaded '/overrides/postfix.cf'"
   else
     echo "No extra postfix settings loaded because optional '/overrides/postfix.cf' not provided."
   fi
 
-  # Include table-map files
-  if ls -A /overrides/*.map 1> /dev/null 2>&1; then
+  # Include file delle mappe
+  if ls -A /overrides/*.map > /dev/null 2>&1; then
     cp /overrides/*.map /etc/postfix/
     postmap /etc/postfix/*.map
     rm /etc/postfix/*.map
@@ -39,9 +42,9 @@ function serviceConf {
   fi
 }
 
-function serviceStart {
+serviceStart() {
   serviceConf
-  # Actually run Postfix
+  # Avvia effettivamente Postfix
   log "[ Starting Postfix... ]"
   /usr/sbin/postfix start-fg 
 }
@@ -52,4 +55,5 @@ export MESSAGE_SIZE_LIMIT=${MESSAGE_SIZE_LIMIT:-"50000000"}
 export RELAYNETS=${RELAYNETS:-""}
 export RELAYHOST=${RELAYHOST:-""}
 
-serviceStart &>> /proc/1/fd/1
+# Redirezione standard 1 e 2 per /bin/sh
+serviceStart >> /proc/1/fd/1 2>&1

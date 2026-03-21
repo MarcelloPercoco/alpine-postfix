@@ -1,9 +1,9 @@
-ARG ALPINE_VERSION=3.23
+ARG ALPINE_VERSION
 FROM alpine:${ALPINE_VERSION}
 
 # Install Postfix and security updates
 RUN apk upgrade --no-cache && \
-    apk add --no-cache bash postfix postfix-pcre cyrus-sasl curl netcat-openbsd
+    apk add --no-cache cyrus-sasl netcat-openbsd postfix postfix-pcre
 
 # Healthcheck checking if SMTP port is responding
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
