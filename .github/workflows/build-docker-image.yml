@@ -67,8 +67,8 @@ jobs: # job name
             linux/arm64
             linux/amd64
           push: true
-          sbom: true
-          provenance: mode=max
+          sbom: false
+          provenance: false
           annotations: org.opencontainers.image.description=${{ env.DESCRIPTION }}
           
   cleanup:
