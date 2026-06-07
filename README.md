@@ -1,20 +1,26 @@
-# docker-postfix-relay
+# alpine-postfix
 
-A lightweight Postfix relay server based on Alpine Linux, designed to forward emails from local services to an upstream SMTP server.
+A lightweight, secure, and minimal Postfix relay server based on Alpine Linux. Designed to forward emails from local services or networks to an upstream SMTP server (like Gmail, Sendgrid, or your own mail server).
 
 ## 🚀 Key Features
 
-* **Dynamic Config**: Placeholders like `{{ DOMAIN }}` in configuration files are automatically replaced by environment variables at runtime.
-* **Header Privacy**: Strips internal IP addresses and User-Agent headers from outgoing mail for better privacy.
-* **Custom Overrides**: Support for custom `.cf` settings and `.map` files via the `/overrides` volume.
+* **Lightweight & Secure**: Built on the minimal Alpine Linux (3.23) with Cyrus SASL and PCRE support.
+* **Dynamic Configuration**: Automatically replaces placeholders like `{{ DOMAIN }}` with environment variables at runtime.
+* **Privacy-focused**: Automatically strips internal IP addresses and User-Agent headers from outgoing mail to prevent information leakage.
+* **Custom Overrides**: Easily inject custom Postfix configuration directives (`postfix.cf`) and `.map` files (e.g., transport, virtual) via the `/overrides` volume.
+* **Health Checks**: Built-in health check to monitor the SMTP daemon's status.
+
+---
 
 ## 🛠 Usage
 
 ### Docker Compose
+
 ```yaml
 services:
   postfix:
-    image: cobra1978/postfix-relay:latest
+    image: ghcr.io/marcellopercoco/alpine-postfix:latest
+    container_name: alpine-postfix
     environment:
       - DOMAIN=example.com
       - HOSTNAME=mail
@@ -28,23 +34,40 @@ services:
     restart: always
 ```
 
+---
+
 ## ⚙️ Configuration Variables
 
-The following environment variables are used to dynamically configure Postfix at runtime:
+The entrypoint script uses the following environment variables to dynamically configure Postfix:
 
 | Variable | Default | Description |
 | :--- | :--- | :--- |
-| `DOMAIN` | `localdomain` | [cite_start]Sets the `mydomain` and `myorigin` variables[cite: 20]. |
-| `HOSTNAME` | `localhost` | [cite_start]Sets the `myhostname` variable[cite: 20]. |
-| `MESSAGE_SIZE_LIMIT` | `50000000` | [cite_start]Defines the maximum size of a message in bytes[cite: 20]. |
-| `RELAYNETS` | (empty) | [cite_start]Networks allowed to relay mail through this server (added to `mynetworks`)[cite: 20]. |
-| `RELAYHOST` | (empty) | [cite_start]The upstream SMTP server where all mail will be forwarded[cite: 20]. |
-| `THEME` | `theme-dark` | (Optional) Theme for dashboard integration if applicable. |
+| `DOMAIN` | `localdomain` | Sets the `mydomain` and `myorigin` variables. |
+| `HOSTNAME` | `localhost` | Sets the `myhostname` variable. If it does not contain a dot `.`, it is automatically set to `HOSTNAME.DOMAIN`. |
+| `MESSAGE_SIZE_LIMIT` | `50000000` | Defines the maximum size of a message in bytes (defaults to ~50MB). |
+| `RELAYNETS` | (empty) | Comma/space-separated list of IP networks allowed to relay mail through this server. |
+| `RELAYHOST` | (empty) | The upstream SMTP server where all mail will be forwarded (e.g. `[smtp.sendgrid.net]:587`). |
+
+---
 
 ## 📂 Custom Overrides
 
-You can further customize Postfix by mounting a volume to `/overrides`. The `postfix-service.sh` script handles these files as follows:
+You can further customize Postfix settings by mounting a folder to `/overrides` containing any of the following:
 
-* **`postfix.cf`**: Any valid Postfix configuration line in this file will be applied using `postconf -e` during startup.
-* **`*.map` files**: Any file ending in `.map` (e.g., `transport.map`, `virtual.map`) will be copied to `/etc/postfix`, processed with `postmap` to create the `.db` index, and then the source `.map` will be removed for security.
-* **Permissions**: The script automatically sets `root:root` ownership and `0600` permissions on the generated `.db` files.
+### 1. `postfix.cf`
+Any valid Postfix configuration line in this file will be parsed and applied using `postconf -e` at startup.
+*Lines starting with `#` or empty lines are ignored.*
+
+**Example `/overrides/postfix.cf`:**
+```ini
+# Increase transport connect timeout
+smtp_connect_timeout = 60s
+# Use custom banner
+smtpd_banner = $myhostname ESMTP
+```
+
+### 2. `*.map` files
+Any file ending in `.map` (e.g., `transport.map`, `virtual.map`) will be:
+1. Copied to `/etc/postfix/`
+2. Processed automatically with `postmap` to generate the matching lookup database
+3. Securely cleaned up (the source `.map` is deleted, leaving only the `.db` files with `root:root` and `0600` permissions)
