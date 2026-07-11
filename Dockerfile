@@ -1,4 +1,4 @@
-ARG ALPINE_VERSION
+ARG ALPINE_VERSION=3.23
 FROM alpine:${ALPINE_VERSION}
 
 # Install Postfix and security updates
